@@ -29,8 +29,16 @@ export const mockPiles: Pile[] = [
         id: 'p3', name: 'Emek East', status: 'Critical', avgTemp: 26, avgMoisture: 13.0,
         problemSensors: [
             { id: 'S11', layer: 'middle', temperature: 51, moisture: 18.4 },
+            { id: 'S12', layer: 'middle', temperature: 51, moisture: 18.4 },
+            { id: 'S13', layer: 'middle', temperature: 51, moisture: 18.4 },
+            { id: 'S14', layer: 'middle', temperature: 51, moisture: 18.4 },
+            { id: 'S15', layer: 'middle', temperature: 51, moisture: 18.4 },
             { id: 'S28', layer: 'top', temperature: 'erratic', moisture: 'erratic' },
         ]
     },
-    { id: 'p4', name: 'Emek West', status: 'Warning', avgTemp: 35, avgMoisture: 14.8, problemSensors: [] }
+    { id: 'p4', name: 'Emek West', status: 'Warning', avgTemp: 35, avgMoisture: 14.8, problemSensors: [
+            { id: 'S6', layer: 'bottom', temperature: 39, moisture: 16.2 },
+            { id: 'S7', layer: 'bottom', temperature: 39, moisture: 16.2 },
+            { id: 'S8', layer: 'bottom', temperature: 39, moisture: 16.2 },
+        ] }
 ];
