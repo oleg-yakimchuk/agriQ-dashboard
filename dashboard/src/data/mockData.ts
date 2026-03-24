@@ -37,8 +37,8 @@ export const mockPiles: Pile[] = [
         ]
     },
     { id: 'p4', name: 'Emek West', status: 'Warning', avgTemp: 35, avgMoisture: 14.8, problemSensors: [
-            { id: 'S6', layer: 'bottom', temperature: 39, moisture: 16.2 },
-            { id: 'S7', layer: 'bottom', temperature: 39, moisture: 16.2 },
-            { id: 'S8', layer: 'bottom', temperature: 39, moisture: 16.2 },
+            { id: 'S06', layer: 'bottom', temperature: 39, moisture: 16.2 },
+            { id: 'S07', layer: 'bottom', temperature: 39, moisture: 16.2 },
+            { id: 'S08', layer: 'bottom', temperature: 39, moisture: 16.2 },
         ] }
 ];
