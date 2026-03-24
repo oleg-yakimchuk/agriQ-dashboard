@@ -12,7 +12,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <aside className="w-64 bg-white border-r border-slate-200 p-6 flex flex-col gap-8 shadow-sm z-10">
                 <div className="flex items-center gap-2">
                     <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold shadow-sm">Q</div>
-                    <h1 className="text-2xl font-bold text-slate-900 tracking-tight">agriQ</h1>
+                    <h1 className="text-2xl font-bold text-slate-900 tracking-tight">AgriQ</h1>
                 </div>
 
                 <nav className="flex flex-col gap-2 text-sm font-medium">
