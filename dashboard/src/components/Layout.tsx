@@ -1,11 +1,9 @@
-import {Link, useLocation} from "react-router-dom";
-import {mockPiles} from "../data/mockData.ts";
+import { Link, useLocation } from "react-router-dom";
+import type {Pile} from "../types";
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = ({ children, piles }: { children: React.ReactNode, piles: Pile[] }) => {
     const location = useLocation();
-
-    // Calculate the total number of alerts dynamically
-    const alertCount = mockPiles.flatMap(p => p.problemSensors).length;
+    const alertCount = piles.flatMap(p => p.problemSensors).length;
 
     return (
         <div className="flex h-screen bg-slate-50 font-sans">

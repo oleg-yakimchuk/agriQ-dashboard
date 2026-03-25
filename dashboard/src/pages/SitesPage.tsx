@@ -1,8 +1,8 @@
-import {useState} from "react";
-import {mockPiles} from "../data/mockData.ts";
+import { useState } from "react";
+import type {Pile} from "../types";
 
-const SitesPage = () => {
-    const [selectedPile, setSelectedPile] = useState<typeof mockPiles[0] | null>(null);
+const SitesPage = ({ piles }: { piles: Pile[] }) => {
+    const [selectedPile, setSelectedPile] = useState<Pile | null>(null);
 
     // Helper to render 10 sensors for a specific layer
     const renderLayer = (layerName: string, startId: number) => (
@@ -40,7 +40,7 @@ const SitesPage = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {mockPiles.map(pile => (
+                {piles.map(pile => (
                     <div
                         key={pile.id}
                         onClick={() => setSelectedPile(pile)}

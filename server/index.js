@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const database = require('./data.json'); // Import our fake database
+const database = require('./data.json'); // Import our mock database
 
 const app = express();
 const PORT = process.env.PORT || 5001;

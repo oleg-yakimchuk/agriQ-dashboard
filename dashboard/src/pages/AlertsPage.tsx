@@ -1,8 +1,7 @@
-import {mockPiles} from "../data/mockData.ts";
+import type {Pile} from "../types";
 
-const AlertsPage = () => {
-    // We flatten the mock data to get a single list of all problem sensors
-    const activeAlerts = mockPiles.flatMap(pile =>
+const AlertsPage = ({ piles }: { piles: Pile[] }) => {
+    const activeAlerts = piles.flatMap(pile =>
         pile.problemSensors.map(sensor => ({
             pileName: pile.name,
             ...sensor
