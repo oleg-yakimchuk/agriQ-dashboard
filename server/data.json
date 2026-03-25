@@ -1,0 +1,52 @@
+{
+  "piles": [
+    {
+      "id": "p1",
+      "name": "Emek North",
+      "status": "OK",
+      "avgTemp": 21,
+      "avgMoisture": 12.5,
+      "problemSensors": []
+    },
+    {
+      "id": "p2",
+      "name": "Emek South",
+      "status": "Warning",
+      "avgTemp": 28,
+      "avgMoisture": 13.2,
+      "problemSensors": [
+        { "id": "S01", "layer": "bottom", "temperature": 44, "moisture": 16.1 },
+        { "id": "S02", "layer": "bottom", "temperature": 44, "moisture": 16.1 },
+        { "id": "S03", "layer": "bottom", "temperature": 44, "moisture": 16.1 },
+        { "id": "S04", "layer": "bottom", "temperature": 44, "moisture": 16.1 }
+      ]
+    },
+    {
+      "id": "p3",
+      "name": "Emek East",
+      "status": "Critical",
+      "avgTemp": 26,
+      "avgMoisture": 13.0,
+      "problemSensors": [
+        { "id": "S11", "layer": "middle", "temperature": 51, "moisture": 18.4 },
+        { "id": "S12", "layer": "middle", "temperature": 51, "moisture": 18.4 },
+        { "id": "S13", "layer": "middle", "temperature": 51, "moisture": 18.4 },
+        { "id": "S14", "layer": "middle", "temperature": 51, "moisture": 18.4 },
+        { "id": "S15", "layer": "middle", "temperature": 51, "moisture": 18.4 },
+        { "id": "S28", "layer": "top", "temperature": "erratic", "moisture": "erratic" }
+      ]
+    },
+    {
+      "id": "p4",
+      "name": "Emek West",
+      "status": "Warning",
+      "avgTemp": 35,
+      "avgMoisture": 14.8,
+      "problemSensors": [
+        { "id": "S06", "layer": "bottom", "temperature": 39, "moisture": 16.2 },
+        { "id": "S07", "layer": "bottom", "temperature": 39, "moisture": 16.2 },
+        { "id": "S08", "layer": "bottom", "temperature": 39, "moisture": 16.2 }
+      ]
+    }
+  ]
+}
