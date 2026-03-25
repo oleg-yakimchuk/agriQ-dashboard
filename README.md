@@ -4,45 +4,65 @@ Below is the High-Level Architecture (HLA) detailing the data ingestion, microse
 *For a detailed explanation of the pipeline, decoupled message queuing, and database structure, please see `design.md`.*
 
 ```mermaid
-graph LR
-%% Setting up the main layout and colors
+graph TD
     classDef hardware fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:black,rx:5,ry:5;
     classDef aws fill:#FFF3E0,stroke:#EF6C00,stroke-width:2px,color:black,rx:5,ry:5;
     classDef compute fill:#FFFDE7,stroke:#FBC02D,stroke-width:2px,color:black,rx:5,ry:5;
     classDef database fill:#E1F5FE,stroke:#0277BD,stroke-width:2px,color:black,stroke-dasharray: 5 5;
+    classDef error fill:#FFEBEE,stroke:#C62828,stroke-width:2px,color:black,stroke-dasharray: 5 5;
     classDef client fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:black,rx:10,ry:10;
 
-    subgraph Facilities ["Harish 7 Facility (Hardware)"]
-        Sensors["30-Sensor Balls / Pile"]:::hardware --> GW["Local Cell Gateway"]:::hardware
-        GW -- "MQTT (Telemetry)" --> IOT["AWS IoT Core"]:::aws
+    subgraph Edge ["1. Edge Ingestion Layer"]
+        S["120 Sensor Arrays"]:::hardware --> GW["Local Cell Gateway"]:::hardware
+        GW -- "MQTT" --> IOT["AWS IoT Core"]:::aws
+        IOT --> SNS_Ingest["SNS: Ingestion Topic"]:::aws
     end
 
-    subgraph Router ["Decoupled Message Routing (Ingestion)"]
-        IOT --> SNS["Amazon SNS: Telemetry Router"]:::aws
+    subgraph External ["2. External Providers"]
+        EB["EventBridge (Cron)"]:::aws --> L_Provider["Lambda: Provider Service"]:::compute
+        W_API["Weather API"]:::hardware -.-> L_Provider
+        C_API["CBOT API"]:::hardware -.-> L_Provider
+        L_Provider --> SNS_Ingest
     end
 
-    subgraph Services ["Event-Driven Microservices"]
-        SNS -- "FANOUT (Subscribe)" --> SQS1["SQS: Storage Buffer"]:::aws
-        SNS -- "FANOUT (Subscribe)" --> SQS2["SQS: Alert Buffer"]:::aws
-
-        SQS1 --> L1["Lambda Node.js: Data Writer"]:::compute
-        SQS2 --> L3["Lambda Node.js: Risk Engine"]:::compute
-
-        L1 --> TSDB[("TimescaleDB: Telemetry")]:::database
-        L3 --> RDS[("Amazon RDS: Metadata")]:::database
-
-        EB["EventBridge Trigger"]:::aws --> L2["Lambda Node.js: External APIs"]:::compute
-        WeatherAPI["Hefer Weather API"]:::hardware -.-> L2
-        CmdtyAPI["CBOT Wheat API"]:::hardware -.-> L2
-        L2 --> TSDB
+    subgraph Dispatch ["3. Central Dispatcher (The Brain)"]
+        SNS_Ingest --> SQS_Ingest["SQS: Intake Buffer"]:::aws
+        SQS_Ingest --> L_Analyzer["Lambda: Analyzer & Dispatcher"]:::compute
+        L_Analyzer -- "Evaluates Logic" --> SNS_Route["SNS: Telemetry Router"]:::aws
     end
 
-    subgraph Clients ["Full-Stack Application Layer (Task 2)"]
-        TSDB --> REST_API["Express.js REST API"]:::client
-        RDS --> REST_API
-        REST_API --> UI["React Operator Dashboard"]:::client
+    subgraph Microservices ["4. Decoupled Action Microservices"]
+        SNS_Route -- "Tag: Normal" --> SQS_N["SQS: Normal Queue"]:::aws
+        SNS_Route -- "Tag: Warning" --> SQS_W["SQS: Warning Queue"]:::aws
+        SNS_Route -- "Tag: Critical" --> SQS_C["SQS: Critical Queue"]:::aws
+
+        SQS_N --> L_Red["Lambda: Reducer Service"]:::compute
+        SQS_W --> L_Store["Lambda: Storage Service"]:::compute
+        SQS_C --> L_Alert["Lambda: Alert Manager"]:::compute
+
+    %% Fault Tolerance
+        SQS_N -.-> DLQ["Dead Letter Queue (DLQ)"]:::error
+        SQS_W -.-> DLQ
+        SQS_C -.-> DLQ
     end
-    
+
+    subgraph Persistence ["5. Persistence & Notification"]
+        L_Red  --> TSDB[("Amazon Timestream (TSDB)")]:::database
+        L_Store -- "Warning Snapshot" --> TSDB
+        L_Alert -- "Critical Event Record" --> TSDB
+
+        L_Store -- "Update Status" --> RDS[("Amazon RDS")]:::database
+        L_Alert -- "Update Status" --> RDS
+
+        L_Alert --> SNS_Notify["SNS: Notification Topic"]:::aws
+        SNS_Notify --> SMS["Operator Phone (SMS/Push)"]:::hardware
+    end
+
+    subgraph ClientLayer ["6. Application Layer (Task 2)"]
+        TSDB --> API["Express.js REST API"]:::client
+        RDS --> API
+        API -- "JSON Payload" --> UI["React Operator Dashboard"]:::client
+    end
 ```    
 ---
 
