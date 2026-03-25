@@ -4,13 +4,14 @@ import path from 'path';
 import { IPileService, Pile } from './IPileService';
 
 export class PileService implements IPileService {
-    // Resolve the path to our mock database
     private readonly dataPath = path.join(__dirname, '../data/data.json');
 
     public async getAllPiles(): Promise<Pile[]> {
         try {
             const rawData = await fs.readFile(this.dataPath, 'utf-8');
-            return JSON.parse(rawData) as Pile[];
+            const parsedData = JSON.parse(rawData);
+            return Array.isArray(parsedData) ? parsedData : parsedData.piles || [];
+
         } catch (error) {
             console.error('Error reading database:', error);
             throw new Error('Failed to retrieve pile data');
