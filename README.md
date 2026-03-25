@@ -5,47 +5,45 @@ Below is the High-Level Architecture (HLA) detailing the data ingestion, microse
 
 ```mermaid
 graph LR
-    %% Setting up the main layout and colors
-    %% Green = Hardware, Orange = AWS Services, Blue = App/Code
+%% Setting up the main layout and colors
     classDef hardware fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:black,rx:5,ry:5;
     classDef aws fill:#FFF3E0,stroke:#EF6C00,stroke-width:2px,color:black,rx:5,ry:5;
     classDef compute fill:#FFFDE7,stroke:#FBC02D,stroke-width:2px,color:black,rx:5,ry:5;
     classDef database fill:#E1F5FE,stroke:#0277BD,stroke-width:2px,color:black,stroke-dasharray: 5 5;
     classDef client fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:black,rx:10,ry:10;
 
-    %% Elements
-    subgraph Facilities [Harish 7 Facility (Hardware)]
-        Sensors[30-Sensor Balls / Pile]:::hardware --> GW[Local Cell Gateway]:::hardware
-        GW -- "MQTT (Telemetry)" --> IOT[AWS IoT Core]:::aws
+    subgraph Facilities ["Harish 7 Facility (Hardware)"]
+        Sensors["30-Sensor Balls / Pile"]:::hardware --> GW["Local Cell Gateway"]:::hardware
+        GW -- "MQTT (Telemetry)" --> IOT["AWS IoT Core"]:::aws
     end
 
-    subgraph Router [Decoupled Message Routing (Ingestion)]
-        IOT --> SNS[Amazon SNS: Telemetry Router]:::aws
+    subgraph Router ["Decoupled Message Routing (Ingestion)"]
+        IOT --> SNS["Amazon SNS: Telemetry Router"]:::aws
     end
 
-    subgraph Services [Event-Driven Microservices]
-        SNS -- "FANOUT (Subscribe)" --> SQS1[SQS: Storage Buffer]:::aws
-        SNS -- "FANOUT (Subscribe)" --> SQS2[SQS: Alert Buffer]:::aws
+    subgraph Services ["Event-Driven Microservices"]
+        SNS -- "FANOUT (Subscribe)" --> SQS1["SQS: Storage Buffer"]:::aws
+        SNS -- "FANOUT (Subscribe)" --> SQS2["SQS: Alert Buffer"]:::aws
 
-        SQS1 --> L1[Lambda Node.js: Data Writer]:::compute
-        SQS2 --> L3[Lambda Node.js: Risk Engine]:::compute
+        SQS1 --> L1["Lambda Node.js: Data Writer"]:::compute
+        SQS2 --> L3["Lambda Node.js: Risk Engine"]:::compute
 
-        L1 --> TSDB[(TimescaleDB: Telemetry)]:::database
-        L3 --> RDS[(Amazon RDS: Metadata)]:::database
-        
-        %% API Ingestion
-        EB[EventBridge Trigger]:::aws --> L2[Lambda Node.js: External APIs]:::compute
-        WeatherAPI[Hefer Weather API]:::hardware -.- L2
-        CmdtyAPI[CBOT Wheat API]:::hardware -.- L2
+        L1 --> TSDB[("TimescaleDB: Telemetry")]:::database
+        L3 --> RDS[("Amazon RDS: Metadata")]:::database
+
+        EB["EventBridge Trigger"]:::aws --> L2["Lambda Node.js: External APIs"]:::compute
+        WeatherAPI["Hefer Weather API"]:::hardware -.-> L2
+        CmdtyAPI["CBOT Wheat API"]:::hardware -.-> L2
         L2 --> TSDB
     end
 
-    subgraph Clients [Full-Stack Application Layer (Task 2)]
-        TSDB --> REST_API[Express.js REST API]:::client
+    subgraph Clients ["Full-Stack Application Layer (Task 2)"]
+        TSDB --> REST_API["Express.js REST API"]:::client
         RDS --> REST_API
-        REST_API --> UI[React Operator Dashboard]:::client
+        REST_API --> UI["React Operator Dashboard"]:::client
     end
-```
+    
+```    
 ---
 
 ## Operator Dashboard & API (Task 2)
